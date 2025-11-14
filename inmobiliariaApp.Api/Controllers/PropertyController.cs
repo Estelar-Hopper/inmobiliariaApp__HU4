@@ -20,7 +20,7 @@ public class PropertyController : ControllerBase
 
     // ------------------------------------------------------------------
 
-    // get propertys by ID
+    // get properties by ID
     [HttpGet("getById/{id:int}")]
     public async Task<IActionResult> GetPropertyById(int id)
     {
@@ -34,7 +34,7 @@ public class PropertyController : ControllerBase
     
     
     
-    // get all propertys 
+    // get all properties
     [HttpGet("getAll")]
     public async Task<IActionResult> GetAllProperty()
     {
@@ -46,11 +46,21 @@ public class PropertyController : ControllerBase
     
     // Create a new property 
     [HttpPost("create")]
-    public async Task<IActionResult> AddProperty([FromBody] PropertyCreateDto propertyDto) //[FromBody] force the Web API to read a simple type from the request body
+    public async Task<IActionResult> AddProperty([FromForm] PropertyCreateDto propertyDto, IFormFile image) 
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
+        UploadFileDto? dto = null;
+        
+        if (image != null)
+        {
+            dto = new UploadFileDto
+            {
+                FileName = image.FileName,
+                FileStream = image.OpenReadStream()
+            };
+        }
         
         // Map The DTO to model
         var property = new Property
@@ -61,42 +71,36 @@ public class PropertyController : ControllerBase
             Price = propertyDto.Price,
             Available = propertyDto.Available,
             Location = propertyDto.Location,
-            UrlClaudinary = propertyDto.UrlClaudinary
         };
         
-        var createdProperty = await _propertyService.AddProperty(property);
+        var createdProperty = await _propertyService.AddProperty(property, dto);
         
         return CreatedAtAction(nameof(GetPropertyById), new { id = createdProperty.Id }, createdProperty);
     }
     
     
     
-    
     //Update a property By ID
     [HttpPut("update/{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] PropertyCreateDto propertyDto)
+    public async Task<IActionResult> Update(int id, [FromForm] PropertyUpdateDto dto, IFormFile? image)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        UploadFileDto? fileDto = null;
 
-        var exits = await _propertyService.GetPropertyById(id);
-        if (exits == null)
+        if (image != null)
+        {
+            fileDto = new UploadFileDto
+            {
+                FileName = image.FileName,
+                FileStream = image.OpenReadStream()
+            };
+        }
+
+        var updated = await _propertyService.UpdateProperty(id, dto, fileDto);
+
+        if (updated == null)
             return NotFound(new { message = $"Property with ID {id} not found" });
-        
-        exits.Title = propertyDto.Title;
-        exits.Address = propertyDto.Address;
-        exits.Description = propertyDto.Description;
-        exits.Price = propertyDto.Price;
-        exits.Available = propertyDto.Available;
-        exits.Location = propertyDto.Location;
-        exits.UrlClaudinary = propertyDto.UrlClaudinary;
-        
-        var updatedProperty = await _propertyService.UpdateProperty(exits);
-        
-        if (!updatedProperty)
-            return StatusCode(500,new { message = $"Error updating property with ID {id}" });
-        
-        return NoContent();
+
+        return Ok(updated);
     }
     
     
@@ -112,4 +116,5 @@ public class PropertyController : ControllerBase
         
         return Ok(DeletedProperty);
     }
+
 }
