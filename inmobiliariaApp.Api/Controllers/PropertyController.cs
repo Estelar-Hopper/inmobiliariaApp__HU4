@@ -46,11 +46,21 @@ public class PropertyController : ControllerBase
     
     // Create a new property 
     [HttpPost("create")]
-    public async Task<IActionResult> AddProperty([FromBody] PropertyCreateDto propertyDto) //[FromBody] force the Web API to read a simple type from the request body
+    public async Task<IActionResult> AddProperty([FromForm] PropertyCreateDto propertyDto, IFormFile image) 
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
+        UploadFileDto? dto = null;
+        
+        if (image != null)
+        {
+            dto = new UploadFileDto
+            {
+                FileName = image.FileName,
+                FileStream = image.OpenReadStream()
+            };
+        }
         
         // Map The DTO to model
         var property = new Property
@@ -61,10 +71,10 @@ public class PropertyController : ControllerBase
             Price = propertyDto.Price,
             Available = propertyDto.Available,
             Location = propertyDto.Location,
-            UrlClaudinary = propertyDto.UrlClaudinary
+            // UrlClaudinary = propertyDto.UrlClaudinary
         };
         
-        var createdProperty = await _propertyService.AddProperty(property);
+        var createdProperty = await _propertyService.AddProperty(property, dto);
         
         return CreatedAtAction(nameof(GetPropertyById), new { id = createdProperty.Id }, createdProperty);
     }
@@ -89,7 +99,7 @@ public class PropertyController : ControllerBase
         exits.Price = propertyDto.Price;
         exits.Available = propertyDto.Available;
         exits.Location = propertyDto.Location;
-        exits.UrlClaudinary = propertyDto.UrlClaudinary;
+        // exits.UrlClaudinary = propertyDto.UrlClaudinary;         TODO
         
         var updatedProperty = await _propertyService.UpdateProperty(exits);
         

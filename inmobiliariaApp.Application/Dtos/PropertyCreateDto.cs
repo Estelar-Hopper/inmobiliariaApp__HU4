@@ -14,7 +14,7 @@ public class PropertyCreateDto
     
     [Required]
     [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo.")]
-    public double Price { get; set; }
+    public decimal Price { get; set; }
     
     [Required]
     public bool Available { get; set; }
@@ -22,8 +22,8 @@ public class PropertyCreateDto
     [Required]
     public string Location { get; set; } = string.Empty;
     
-    [Required]
-    [Url]
-    public string? UrlClaudinary { get; set; } = string.Empty;
+    // [Required]
+    // [Url]
+    // public string? UrlClaudinary { get; set; } = string.Empty;
 
 }

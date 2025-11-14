@@ -7,11 +7,27 @@ using inmobiliariaApp.Infrastructure.Data;
 using inmobiliariaApp.Infrastructure.Repositories;
 using System.Text;
 using inmobiliariaApp.Infrastructure.Extensions;
+using inmobiliariaApp.Infrastructure.Services;
+using inmobiliariaApp.Infrastructure.Settings;
+using ProductCatalog.Application.Interfaces;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var cultureInfo = new CultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 // -------------------------------------------------------------------
+// cloudinary
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("CloudinarySettings")
+);
+
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+
 // Connection with DB:
 builder.Services.AddInfrastructure(builder.Configuration);
+
 
 //  Dependence inyection (DI)
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
@@ -19,6 +35,7 @@ builder.Services.AddScoped<PropertyService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<UserService>();
+
 
 // Expose endpoints
 builder.Services.AddControllers(); 

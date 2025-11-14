@@ -2,10 +2,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\inmobiliariaApp.Domain\inmobiliariaApp.Domain.csproj" />
+    <ProjectReference Include="..\inmobiliariaApp.Application\inmobiliariaApp.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.27.7" />
     <PackageReference Include="jose-jwt" Version="5.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
