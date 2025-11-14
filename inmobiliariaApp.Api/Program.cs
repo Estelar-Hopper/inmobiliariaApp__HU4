@@ -48,6 +48,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+
+//deploy
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Catalog API v1");
+        c.RoutePrefix = string.Empty;
+    });
+}
+
 //  Middleware
 if (app.Environment.IsDevelopment())
 {
@@ -64,3 +76,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// cambio
