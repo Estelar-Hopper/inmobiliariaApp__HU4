@@ -11,6 +11,6 @@
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
 
-        public ICollection<Property> Products { get; set; } = new List<Property>();
+        // public ICollection<Property> Products { get; set; } = new List<Property>();
     }
 }

@@ -28,6 +28,7 @@ public class PropertyController : ControllerBase
 
        if (property == null)
            return NotFound(new { message = $"property with {id} not found "});
+       
        return Ok(property);
     }
     
@@ -43,7 +44,7 @@ public class PropertyController : ControllerBase
     
     
     
-    // Create a new properiey 
+    // Create a new property 
     [HttpPost("create")]
     public async Task<IActionResult> AddProperty([FromBody] PropertyCreateDto propertyDto) //[FromBody] force the Web API to read a simple type from the request body
     {
@@ -54,13 +55,17 @@ public class PropertyController : ControllerBase
         // Map The DTO to model
         var property = new Property
         {
-            Name = propertyDto.Name,
+            Title = propertyDto.Title,
+            Address = propertyDto.Address,
             Description = propertyDto.Description,
-            Price = propertyDto.Price
-
+            Price = propertyDto.Price,
+            Available = propertyDto.Available,
+            Location = propertyDto.Location,
+            UrlClaudinary = propertyDto.UrlClaudinary
         };
         
         var createdProperty = await _propertyService.AddProperty(property);
+        
         return CreatedAtAction(nameof(GetPropertyById), new { id = createdProperty.Id }, createdProperty);
     }
     
@@ -78,14 +83,19 @@ public class PropertyController : ControllerBase
         if (exits == null)
             return NotFound(new { message = $"Property with ID {id} not found" });
         
-        exits.Name = propertyDto.Name;
+        exits.Title = propertyDto.Title;
+        exits.Address = propertyDto.Address;
         exits.Description = propertyDto.Description;
         exits.Price = propertyDto.Price;
+        exits.Available = propertyDto.Available;
+        exits.Location = propertyDto.Location;
+        exits.UrlClaudinary = propertyDto.UrlClaudinary;
         
         var updatedProperty = await _propertyService.UpdateProperty(exits);
         
         if (!updatedProperty)
             return StatusCode(500,new { message = $"Error updating property with ID {id}" });
+        
         return NoContent();
     }
     
@@ -99,6 +109,7 @@ public class PropertyController : ControllerBase
         
         if (!DeletedProperty)
             return NotFound(new { message = $"Property with ID {id} not found" });
+        
         return Ok(DeletedProperty);
     }
 }
