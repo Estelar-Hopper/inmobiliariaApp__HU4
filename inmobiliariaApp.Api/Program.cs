@@ -5,16 +5,13 @@ using inmobiliariaApp.Application;
 using inmobiliariaApp.Domain.Interfaces;
 using inmobiliariaApp.Infrastructure.Data;
 using inmobiliariaApp.Infrastructure.Repositories;
-using System.Text; 
+using System.Text;
+using inmobiliariaApp.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//  Connection String
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Default") ?? builder.Configuration.GetConnectionString("DefaultConnection");
-
-//  DbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+// -------------------------------------------------------------------
+// Connection with DB:
+builder.Services.AddInfrastructure(builder.Configuration);
 
 //  Dependence inyection (DI)
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
@@ -23,8 +20,9 @@ builder.Services.AddScoped<PropertyService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<UserService>();
 
-builder.Services.AddControllers(); // expose endpoints
-
+// Expose endpoints
+builder.Services.AddControllers(); 
+// -------------------------------------------------------------------
 //  Configuration  JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -46,6 +44,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //  Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// -------------------------------------------------------------------
 
 var app = builder.Build();
 
