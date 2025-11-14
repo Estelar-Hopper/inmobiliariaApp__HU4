@@ -47,20 +47,6 @@ public class PropertyService
     
     
     //update a property
-    
-    
-    
-    // Delete a property 
-    public async Task<bool> DeleteProperty(int id)
-    {
-        var exits = await _propertyRepository.GetPropertyById(id);
-        if (exits == null)
-            return false;
-        await _propertyRepository.DeleteProperty(id);
-        return true;
-    }
-    
-    
     public async Task<Property?> UpdateProperty(int id, PropertyUpdateDto dto, UploadFileDto? image)
     {
         var property = await _propertyRepository.GetPropertyById(id);
@@ -92,5 +78,17 @@ public class PropertyService
 
         return property;
     }
-
+    
+    
+    
+    // Delete a property 
+    public async Task<bool> DeleteProperty(int id)
+    {
+        var exits = await _propertyRepository.GetPropertyById(id);
+        if (exits == null)
+            return false;
+        await _propertyRepository.DeleteProperty(id);
+        return true;
+    }
+    
 }
