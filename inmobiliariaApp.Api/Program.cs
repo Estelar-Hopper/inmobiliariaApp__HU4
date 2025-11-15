@@ -142,7 +142,7 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "https://tudominiofrontend.com",            // Reemplazar por nuestro dominio real en front
+                //"https://tudominiofrontend.com",            // Reemplazar por nuestro dominio real en front
                 "https://inmobiliaria-app-hu4-598dd1cade22.herokuapp.com"       // Dominio del backend
             )
             .AllowAnyMethod()
