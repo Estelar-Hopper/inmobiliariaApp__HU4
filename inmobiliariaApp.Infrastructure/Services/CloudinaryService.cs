@@ -14,13 +14,35 @@ public class CloudinaryService : ICloudinaryService
 
     public CloudinaryService(IOptions<CloudinarySettings> config)
     {
-        var acc = new Account(
-            config.Value.CloudName,
-            config.Value.ApiKey,
-            config.Value.ApiSecret
-            );
+        // var acc = new Account(
+        //     config.Value.CloudName,
+        //     config.Value.ApiKey,
+        //     config.Value.ApiSecret
+        //     );
+        //
+        // _cloudinary = new Cloudinary(acc);
         
-        _cloudinary = new Cloudinary(acc);
+        var settings = config.Value;
+
+        var cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME") 
+                        ?? settings.CloudName;
+
+        var apiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY") 
+                     ?? settings.ApiKey;
+
+        var apiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET") 
+                        ?? settings.ApiSecret;
+
+        if (string.IsNullOrEmpty(cloudName) ||
+            string.IsNullOrEmpty(apiKey) ||
+            string.IsNullOrEmpty(apiSecret))
+        {
+            throw new Exception("Cloudinary configuration missing!");
+        }
+
+        var account = new Account(cloudName, apiKey, apiSecret);
+
+        _cloudinary = new Cloudinary(account);
     }
     
     public async Task<string> UploadImageAsync(UploadFileDto file)
