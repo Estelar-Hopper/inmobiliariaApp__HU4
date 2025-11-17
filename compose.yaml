@@ -1,0 +1,7 @@
+﻿services:
+  inmobiliariaapp.api:
+    image: inmobiliariaapp.api
+    build:
+      context: .
+      dockerfile: inmobiliariaApp.Api/Dockerfile
+
